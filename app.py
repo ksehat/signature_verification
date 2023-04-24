@@ -15,22 +15,28 @@ app.config['UPLOAD_FOLDER'] = 'uploads/'
 # model = SignatureVerificationModel()
 # model.load_weights("path/to/your/trained/model")
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/")
 def index():
-    if request.method == "GET":
-        # Get the user's name, family name, and signature
-        return render_template("index.html")
-    #     name = request.form["name"]
-    #     family_name = request.form["family_name"]
-    #     signature_data = request.form["signature"]
+    return render_template('index.html')
+
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    if request.method == "POST":
+        first_name = request.form["first_name"]
+        last_name = request.form["last_name"]
+        national_id = request.form["national_id"]
+        signature_data = request.form["signature"]
+        mouse_data = request.form["mouse_data"]
+
     #
-    #     # Decode the signature image from base64
-    #     signature_image = base64.b64decode(signature_data.split(",")[-1])
-    #     signature_image = Image.open(BytesIO(signature_image))
+        # Decode the signature image from base64
+        signature_image = base64.b64decode(signature_data.split(",")[-1])
+        signature_image = Image.open(BytesIO(signature_image))
     #
-    #     # Save the signature image
-    #     signature_path = os.path.join(app.config["UPLOAD_FOLDER"], f"{name}_{family_name}.png")
-    #     signature_image.save(signature_path)
+        # Save the signature image
+        signature_path = os.path.join(app.config["UPLOAD_FOLDER"], f"{first_name}_{last_name}_{national_id}.png")
+        signature_image.save(signature_path)
     #
     #     # Check the authenticity of the signature
     #     result = model.verify_signature(name, family_name, signature_path)
