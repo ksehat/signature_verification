@@ -1,0 +1,98 @@
+<form action="/signup" method="post" style="background-color: #f4f4f4; padding: 20px; border-radius: 5px;">
+  <h2 style="text-align: center;">Sign Up</h2>
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    <label for="first_name">First Name:</label>
+    <input type="text" id="first_name" name="first_name" style="padding: 10px; border-radius: 5px; border: none;">
+    <label for="last_name">Last Name:</label>
+    <input type="text" id="last_name" name="last_name" style="padding: 10px; border-radius: 5px; border: none;">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" style="padding: 10px; border-radius: 5px; border: none;">
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" style="padding: 10px; border-radius: 5px; border: none;">
+    <label for="signature">Signature:</label>
+    <canvas id="signature-canvas" width=300 height=150 style="border:1px solid #000000;align-self: flex-start"></canvas><br>
+    <input type="submit" value="Submit Signature">
+    <p>Signatures remaining: <span id="remaining">20</span></p>
+    <input type="submit" value="Submit Form" style="background-color: #4CAF50; color: white; padding: 12px 20px; border-radius: 5px; cursor:pointer;">
+  </div>
+</form>
+
+<script>
+let remaining = document.querySelector("#remaining");
+let submitSignature = document.querySelector("input[value='Submit Signature']");
+let submitForm = document.querySelector("input[value='Submit Form']");
+
+let firstName = document.querySelector("#first_name");
+let lastName = document.querySelector("#last_name");
+let username = document.querySelector("#username");
+let password = document.querySelector("#password");
+
+let canvas = document.querySelector("#signature-canvas");
+let ctx = canvas.getContext("2d");
+ctx.strokeStyle = "#000000";
+ctx.lineWidth = 2;
+
+let isDrawing = false;
+let lastX = 0;
+let lastY = 0;
+let isEmpty = true;
+
+function getMousePos(canvas, evt) {
+    let rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+    };
+}
+
+canvas.addEventListener("mousedown", (e) => {
+  isDrawing = true;
+
+  let mousePos = getMousePos(canvas, e);
+
+  [lastX, lastY] = [mousePos.x, mousePos.y];
+});
+
+canvas.addEventListener("mousemove", (e) => {
+  if (!isDrawing) return;
+
+  let mousePos = getMousePos(canvas, e);
+
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(mousePos.x, mousePos.y);
+  ctx.stroke();
+
+  [lastX, lastY] = [mousePos.x, mousePos.y];
+
+  isEmpty = false;
+});
+
+canvas.addEventListener("mouseup", () => {
+  isDrawing = false;
+});
+
+canvas.addEventListener("mouseout", () => {
+  isDrawing = false;
+});
+
+submitSignature.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  if (isEmpty || !firstName.value || !lastName.value || !username.value || !password.value) return;
+
+  if (remaining.textContent > 0) {
+    remaining.textContent -= 1;
+
+    if (remaining.textContent == 0) {
+      submitSignature.disabled = true;
+      submitForm.disabled = false;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    isEmpty = true;
+  }
+});
+
+submitForm.disabled = true;
+</script>

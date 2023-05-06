@@ -1,51 +1,71 @@
-import os
-from flask import Flask, render_template, request, redirect, url_for
-import cv2
-from PIL import Image
-import numpy as np
-from io import BytesIO
-import base64
-import tensorflow as tf
-# from signature_verification import SignatureVerificationModel
-
+from flask import Flask, render_template, request, redirect
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'uploads/'
 
-# Load the trained model
-# model = SignatureVerificationModel()
-# model.load_weights("path/to/your/trained/model")
+@app.route('/')
+def login():
+    return render_template('login.html')
 
-@app.route("/")
-def index():
-    return render_template('index.html')
+@app.route('/login', methods=['POST'])
+def login_post():
+    username = request.form['username']
+    password = request.form['password']
+    # check if username already exists in database
+    if username_exists(username):
+        # display error message
+        error = "Username already exists"
+        return render_template('login.html', error=error)
+    else:
+        # check if password is correct
+        # if correct, redirect to home page
+        # if not correct, show error message
+        return f"Username: {username}, Password: {password}"
+
+def username_exists(username):
+    # check if username exists in database
+    # return True if it does, False otherwise
+    pass
 
 
-@app.route('/submit', methods=['POST'])
-def submit():
-    if request.method == "POST":
-        first_name = request.form["first_name"]
-        last_name = request.form["last_name"]
-        national_id = request.form["national_id"]
-        signature_data = request.form["signature"]
-        mouse_data = request.form["mouse_data"]
+# @app.route('/signup', methods=['get'])
+# def login():
+#     return render_template('signup.html')
 
-    #
-        # Decode the signature image from base64
-        signature_image = base64.b64decode(signature_data.split(",")[-1])
-        signature_image = Image.open(BytesIO(signature_image))
-    #
-        # Save the signature image
-        signature_path = os.path.join(app.config["UPLOAD_FOLDER"], f"{first_name}_{last_name}_{national_id}.png")
-        signature_image.save(signature_path)
-    #
-    #     # Check the authenticity of the signature
-    #     result = model.verify_signature(name, family_name, signature_path)
-    #
-    #     if result["is_authenticated"]:
-    #         return "Authenticated"
-    #     else:
-    #         return "Not authenticated"
-    # return render_template("index.html")
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        username = request.form['username']
+        password = request.form['password']
 
-if __name__ == "__main__":
-    app.run(host='http://127.0.0.1',port=8080)
+        # Check if username already exists in database
+        # This is just an example, you will need to implement the check based on your database setup
+        if username_exists_in_database(username):
+            return 'Username already exists'
+        else:
+            # Add user to database
+            # This is just an example, you will need to implement adding the user based on your database setup
+            add_user_to_database(first_name, last_name, username, password)
+            return redirect(url_for('login'))
+    else:
+        return render_template('signup.html')
+
+
+def username_exists_in_database(username):
+    # Check if username already exists in database
+    # This is just an example, you will need to implement the check based on your database setup
+    pass
+
+
+def add_user_to_database(first_name, last_name, username, password):
+    # Add user to database
+    # This is just an example, you will need to implement adding the user based on your database setup
+    pass
+
+
+def url_for(string):
+    if string=='login':
+        return '/'
+
+if __name__ == '__main__':
+    app.run()

@@ -11,7 +11,7 @@
   <body>
     <div class="container">
       <h1>Signature Verification</h1>
-      <form id="signature-form" method="post" action="/submit">
+      <<form id="signature-form" method="post" action="/submit">
         <div class="form-group">
           <label for="first_name">First Name</label>
           <input type="text" class="form-control" id="first_name" name="first_name" required>
@@ -39,6 +39,7 @@
         var canvas = document.getElementById("signature");
         var ctx = canvas.getContext("2d");
         var drawing = false;
+        var signature_data = [];
         var mouse_data = [];
 
         canvas.addEventListener("mousedown", function(e) {
@@ -61,11 +62,18 @@
         });
 
         $("#signature-form").submit(function() {
-          var signature_data = canvas.toDataURL("image/png");
-          $("#signature_data").val(signature_data);
-          $("#mouse_data").val(mouse_data);
+          for (var i = 0; i < 10; i++) {
+            var temp_signature_data = canvas.toDataURL("image/png");
+            signature_data.push(temp_signature_data);
+            mouse_data.push([]);
+          }
+          for (var i = 0; i < 10; i++) {
+            var temp_mouse_data = mouse_data.slice(i * 5000, (i +5000);
+        $("#signature_data").val(JSON.stringify(signature_data));
+        $("#mouse_data").val(JSON.stringify(mouse_data));
+        }
         });
-      });
+        });
     </script>
   </body>
 </html>
