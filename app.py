@@ -1,9 +1,12 @@
 from flask import Flask, render_template, request, redirect
+
 app = Flask(__name__)
+
 
 @app.route('/')
 def login():
     return render_template('login.html')
+
 
 @app.route('/login', methods=['POST'])
 def login_post():
@@ -19,6 +22,7 @@ def login_post():
         # if correct, redirect to home page
         # if not correct, show error message
         return f"Username: {username}, Password: {password}"
+
 
 def username_exists(username):
     # check if username exists in database
@@ -64,8 +68,9 @@ def add_user_to_database(first_name, last_name, username, password):
 
 
 def url_for(string):
-    if string=='login':
+    if string == 'login':
         return '/'
+
 
 if __name__ == '__main__':
     app.run()
